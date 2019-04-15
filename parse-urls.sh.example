@@ -1,7 +1,8 @@
 #!/bin/bash
 
-file_name=bad-ips.txt
+file_name=bad-ips
 
+#Add each new url with a new line
 urls=(
 http://www.ipdeny.com/ipblocks/data/aggregated/ru-aggregated.zone
 http://www.ipdeny.com/ipblocks/data/aggregated/nl-aggregated.zone
@@ -9,16 +10,18 @@ http://www.ipdeny.com/ipblocks/data/aggregated/ng-aggregated.zone
 https://check.torproject.org/exit-addresses
 )
 
+#Change script_dir and web_dir if needed
 script_dir=/opt/scripts
-script_file=."$file_name".tmp
+script_file=.${file_name}.tmp
 web_dir=/var/www/html
-web_file="$file_name".txt
+web_file=${file_name}.txt
 timestamp=$(date "+%FT%T")
 
+#Curl each url defined above and parse for single ip addresses or blocks and add timestamp information to the first line
 for url in "${urls[@]}"
 do
-  curl ${url} | grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}(/[0-9]{1,2})?" | sed "1 s|$| #${url} - retrieved $timestamp|" >> $script_dir/$script_file
+  curl ${url} | grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}(/[0-9]{1,2})?" | sed "1 s|$| #${url} - retrieved ${timestamp}|" >> ${script_dir}/${script_file}
 done
 
-cp $script_dir/$script_file $web_dir/$web_file
-rm $script_dir/$script_file
+cp ${script_dir}/${script_file} ${web_dir}/${web_file}
+rm ${script_dir}/${script_file}
